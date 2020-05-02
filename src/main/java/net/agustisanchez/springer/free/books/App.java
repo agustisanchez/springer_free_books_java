@@ -2,6 +2,7 @@ package net.agustisanchez.springer.free.books;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,22 +29,29 @@ public class App {
     public static void main(String[] args) {
 
         Options options = new Options();
-        options.addOption("c", "category", true, "Categories");
+        options.addOption("c", "category", true, "Category");
         options.addOption("l", "language", true, "Languages (2-letter ISO code).");
-        options.addOption("f", "format", true, "Document format (pdf, epub).");
-        options.addOption("o", "output", true, "Document format (pdf, epub).");
+        options.addOption("f", "format", true, "Document format (Values: pdf, epub. Defaults to pdf).");
+        options.addOption("o", "output", true, "Output directory (current directory by default)");
 
         CommandLineParser parser = new BasicParser();
 
+        HelpFormatter formatter = new HelpFormatter();
 
         try {
             AppCommandLine cmd = new AppCommandLine(parser.parse(options, args));
-            logger.info(" cat {} lang {} format {} ouput {}",
+            logger.debug("Categories {}, languages {}, formats {}, output directory {}",
                     cmd.optionValues("c"), cmd.optionValues("l"), cmd.optionValues("f"), cmd.optionValues("o"));
-            new App().run(cmd.optionValues("c"),
-                    cmd.optionValues("l"),
-                    cmd.optionValues("f"),
-                    cmd.optionValues("o").stream().findFirst());
+            if (cmd.getOptions().length == 0) {
+                formatter.printHelp("java -jar springer.free.books-VERSION.jar [options]", options);
+                System.out.println("Example:");
+                System.out.println("java -jar springer.free.books-1.0-SNAPSHOT.jar -c chemistry -c \"computer science\" -f pdf -l en -o ~/Downloads/springer-books");
+            } else {
+                new App().run(cmd.optionValues("c"),
+                        cmd.optionValues("l"),
+                        cmd.optionValues("f"),
+                        cmd.optionValues("o").stream().findFirst());
+            }
         } catch (AppException e) {
             logger.error(e.getMessage());
             System.exit(-1);

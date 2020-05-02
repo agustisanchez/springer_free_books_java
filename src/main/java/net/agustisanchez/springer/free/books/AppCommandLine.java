@@ -23,5 +23,8 @@ public class AppCommandLine {
         return optionValues(opt.getOpt());
     }
 
+    public Option[] getOptions() {
+        return cmd.getOptions();
+    }
 
 }

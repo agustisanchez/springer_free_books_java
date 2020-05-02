@@ -1,4 +1,6 @@
-## Python script to download all Springer books released for free during the 2020 COVID-19 quarantine
+## Java command-line application to download all Springer books released for free during the 2020 COVID-19 quarantine
+
+Please, go to https://github.com/alexgand/springer_free_books for the original Python script by alexgand.
 
 ### Usage
 **Note**: If you want just one or two specific books, get the excel file [here](https://resource-cms.springernature.com/springer-cms/rest/v1/content/17858272/data/v4) and manually download those or use the script to help you download (see **Download book selectively** sub-section). It took about 4 hours to complete the 409 english books (14 GB, both PDF and EPUB) on my machine.
