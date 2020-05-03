@@ -1,16 +1,9 @@
 package net.agustisanchez.springer.free.books;
 
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -34,25 +27,11 @@ public class App {
         options.addOption("f", "format", true, "Document format (Values: pdf, epub. Defaults to pdf).");
         options.addOption("o", "output", true, "Output directory (current directory by default)");
 
-        CommandLineParser parser = new BasicParser();
-
-        HelpFormatter formatter = new HelpFormatter();
-
         try {
-            AppCommandLine cmd = new AppCommandLine(parser.parse(options, args));
-            if (cmd.getOptions().length == 0) {
-                StringWriter sw = new StringWriter();
-                formatter.printHelp(new PrintWriter(sw),80,  "java -jar springer.free.books-VERSION.jar [options]", "", options, 5, 2, "");
-                sw.append("Example:\n");
-                if (System.getProperty("os.name").startsWith("Windows")) {
-                    sw.append("java -jar springer.free.books-1.0-SNAPSHOT.jar -c chemistry -c \"computer science\" -f pdf -l en -o %HOME%\\Downloads\\springer-books");
-                }  else {
-                    sw.append("java -jar springer.free.books-1.0-SNAPSHOT.jar -c chemistry -c \"computer science\" -f pdf -l en -o ~/Downloads/springer-books");
-                }
-                AppLogger.log(sw.toString());
+            AppCommandLine cmd = AppCommandLine.parse(options, args);
+            if (cmd.noOptionsGiven()) {
+                cmd.printHelp();
             } else {
-//                AppLogger.log("Categories {}, languages {}, formats {}, output directory {}",
-//                        cmd.optionValues("c"), cmd.optionValues("l"), cmd.optionValues("f"), cmd.optionValues("o"));
                 new App().run(cmd.optionValues("c"),
                         cmd.optionValues("l"),
                         cmd.optionValues("f"),
