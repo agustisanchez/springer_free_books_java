@@ -7,6 +7,8 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -15,6 +17,8 @@ import java.util.Collections;
 import java.util.List;
 
 class AppCommandLine {
+
+    private Logger logger = LoggerFactory.getLogger(App.class);
 
     private CommandLine cmd;
 
@@ -54,7 +58,7 @@ class AppCommandLine {
         }  else {
             sw.append("java -jar springer.free.books-1.0-SNAPSHOT.jar -c chemistry -c \"computer science\" -f pdf -l en -o ~/Downloads/springer-books");
         }
-        AppLogger.log(sw.toString());
+        logger.info(sw.toString());
 
     }
 

@@ -13,11 +13,11 @@ import java.util.List;
 
 public class BookDownloader {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
-
     private static String baseUrl = "https://link.springer.com/";
 
     private static String prefix = "http://doi.org/";
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private File outputDir;
 
@@ -53,15 +53,15 @@ public class BookDownloader {
                     if (filename == null || filename.isEmpty()) {
                         filename = book.getTitle().replace('/', '_').replace('\\', '_') + f.getExt();
                     }
-                    AppLogger.log("Writing \"{}\".", filename);
+                    logger.info("Writing \"{}\".", filename);
                     IOUtils.copy(conn.getInputStream(), new FileOutputStream(new File(outputDir, filename)));
                 } else if (responseCode == 404) {
-                    AppLogger.log("WARN: Book \"{}\" ({}) was not found.", book.getTitle(), f);
+                    logger.info("WARN: Book \"{}\" ({}) was not found.", book.getTitle(), f);
                 } else {
                     throw new Exception("Response code not OK: " + responseCode);
                 }
             } catch (Exception e) {
-                AppLogger.error("Could not download: " + url + ".", e);
+                logger.error("ERROR {}.", "Could not download: " + url, e);
             }
         });
     }
