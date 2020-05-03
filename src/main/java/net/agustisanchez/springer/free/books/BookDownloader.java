@@ -53,15 +53,15 @@ public class BookDownloader {
                     if (filename == null || filename.isEmpty()) {
                         filename = book.getTitle().replace('/', '_').replace('\\', '_') + f.getExt();
                     }
-                    logger.info("Writing \"{}\".", filename);
+                    AppLogger.log("Writing \"{}\".", filename);
                     IOUtils.copy(conn.getInputStream(), new FileOutputStream(new File(outputDir, filename)));
                 } else if (responseCode == 404) {
-                    logger.warn("Book \"{}\" ({}) was not found.", book.getTitle(), f);
+                    AppLogger.log("WARN: Book \"{}\" ({}) was not found.", book.getTitle(), f);
                 } else {
                     throw new Exception("Response code not OK: " + responseCode);
                 }
             } catch (Exception e) {
-                logger.error("Could not download: " + url + ".", e);
+                AppLogger.error("Could not download: " + url + ".", e);
             }
         });
     }

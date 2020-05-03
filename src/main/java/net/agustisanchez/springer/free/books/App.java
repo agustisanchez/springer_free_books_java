@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -18,8 +20,6 @@ import java.util.stream.Collectors;
  * Hello world!
  */
 public class App {
-
-    private static Logger logger = LoggerFactory.getLogger(App.class);
 
     String tableUrl = "https://resource-cms.springernature.com/springer-cms/rest/v1/content/17858272/data/v4";
 
@@ -40,23 +40,29 @@ public class App {
 
         try {
             AppCommandLine cmd = new AppCommandLine(parser.parse(options, args));
-            logger.debug("Categories {}, languages {}, formats {}, output directory {}",
-                    cmd.optionValues("c"), cmd.optionValues("l"), cmd.optionValues("f"), cmd.optionValues("o"));
             if (cmd.getOptions().length == 0) {
-                formatter.printHelp("java -jar springer.free.books-VERSION.jar [options]", options);
-                System.out.println("Example:");
-                System.out.println("java -jar springer.free.books-1.0-SNAPSHOT.jar -c chemistry -c \"computer science\" -f pdf -l en -o ~/Downloads/springer-books");
+                StringWriter sw = new StringWriter();
+                formatter.printHelp(new PrintWriter(sw),80,  "java -jar springer.free.books-VERSION.jar [options]", "", options, 5, 2, "");
+                sw.append("Example:\n");
+                if (System.getProperty("os.name").startsWith("Windows")) {
+                    sw.append("java -jar springer.free.books-1.0-SNAPSHOT.jar -c chemistry -c \"computer science\" -f pdf -l en -o %HOME%\\Downloads\\springer-books");
+                }  else {
+                    sw.append("java -jar springer.free.books-1.0-SNAPSHOT.jar -c chemistry -c \"computer science\" -f pdf -l en -o ~/Downloads/springer-books");
+                }
+                AppLogger.log(sw.toString());
             } else {
+//                AppLogger.log("Categories {}, languages {}, formats {}, output directory {}",
+//                        cmd.optionValues("c"), cmd.optionValues("l"), cmd.optionValues("f"), cmd.optionValues("o"));
                 new App().run(cmd.optionValues("c"),
                         cmd.optionValues("l"),
                         cmd.optionValues("f"),
                         cmd.optionValues("o").stream().findFirst());
             }
         } catch (AppException e) {
-            logger.error(e.getMessage());
+            AppLogger.error(e.getMessage());
             System.exit(-1);
         } catch (Exception e) {
-            logger.error(e.getClass().getName() + (e.getMessage() != null ? ": " + e.getMessage() : ""));
+            AppLogger.error(e.getClass().getName() + (e.getMessage() != null ? ": " + e.getMessage() : ""));
             System.exit(-2);
         }
 
@@ -64,19 +70,19 @@ public class App {
 
     private void run(List<String> categories, List<String> languages, List<String> formats, Optional<String> outputOpt) throws Exception {
         File output = new File(outputOpt.orElse("."));
-        logger.info("Categories " + categories + " languages " + languages + " formats " + formats + " output " + output.getAbsolutePath());
+        // AppLogger.log("Categories " + categories + " languages " + languages + " formats " + formats + " output " + output.getAbsolutePath());
         if (!output.exists()) {
-            logger.info("Creating output directory \"{}\".", output.getAbsolutePath());
+            AppLogger.log("Creating output directory \"{}\".", output.getAbsolutePath());
             output.mkdirs();
         }
         List<Format> typedFormats = formats.stream().map(f -> Format.valueOf(f.toUpperCase())).collect(Collectors.toList());
         List<Book> books = readTable(categories, languages);
-        logger.info("Found {} books.", books.size());
-        logger.info("Downloading to  \"{}\".", output.getAbsolutePath());
+        AppLogger.log("Found {} books.", books.size());
+        AppLogger.log("Downloading to  \"{}\".", output.getAbsolutePath());
         BookDownloader downloader = new BookDownloader(output);
         downloader.formats(typedFormats);
         books.forEach(book -> {
-            logger.info("Downloading book \"{}\".", book.getTitle());
+            AppLogger.log("Downloading book \"{}\".", book.getTitle());
             downloader.download(book);
         });
 
