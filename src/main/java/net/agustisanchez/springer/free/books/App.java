@@ -1,6 +1,9 @@
 package net.agustisanchez.springer.free.books;
 
-import org.apache.commons.cli.Options;
+import net.agustisanchez.springer.free.books.cli.CommandLine;
+import net.agustisanchez.springer.free.books.cli.MissingOptionException;
+import net.agustisanchez.springer.free.books.cli.Option;
+import net.agustisanchez.springer.free.books.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,10 +11,11 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class App {
+
+    static final int MIN_CAT_LENGTH = 5;
 
     private static Logger logger = LoggerFactory.getLogger(App.class);
 
@@ -23,43 +27,47 @@ public class App {
     public static void main(String[] args) {
 
         Options options = new Options();
-        options.addOption("c", "category", true, "Category");
-        options.addOption("l", "language", true, "Languages (2-letter ISO code).");
-        options.addOption("f", "format", true, "Document format (Values: pdf, epub. Defaults to pdf).");
-        options.addOption("o", "output", true, "Output directory (current directory by default)");
+        Option catOpt = options.addOption(new Option("c", "Category", null, true));
+        Option langOpt = options.addOption(new Option("l", "en", "Languages (2-letter ISO code; default \"en\")."));
+        Option formatOpt = options.addOption(new Option("f", "pdf", "Document format (Values: pdf, epub. Defaults to \"pdf\")."));
+        Option outputOpt = options.addOption(new Option("o", ".", "Output directory (current directory by default)."));
 
         try {
-            AppCommandLine cmd = AppCommandLine.parse(options, args);
-            if (cmd.noOptionsGiven()) {
-                cmd.printHelp();
-            } else {
-                new App().run(cmd.optionValues("c"),
-                        cmd.optionValues("l"),
-                        cmd.optionValues("f"),
-                        cmd.optionValues("o").stream().findFirst());
-            }
+            CommandLine cmd = CommandLine.parse(options.list(), args);
+            cmd.validate();
+            new App().run(cmd.getValuesForOption(catOpt),
+                    cmd.getValuesForOption(langOpt),
+                    cmd.getValuesForOption(formatOpt),
+                    cmd.getValueForOption(outputOpt));
+        } catch (MissingOptionException e) {
+            logger.error("ERROR You need to specify at least one category.");
+            System.exit(1);
         } catch (AppException e) {
-            logger.error("ERROR {}",e.getMessage());
-            System.exit(-1);
+            logger.error("ERROR {}", e.getMessage());
+            System.exit(2);
         } catch (Exception e) {
             logger.error("ERROR {}", e.getClass().getName() + (e.getMessage() != null ? ": " + e.getMessage() : ""), e);
-            System.exit(-2);
+            System.exit(3);
         }
 
     }
 
-    private void run(List<String> categories, List<String> languages, List<String> formats, Optional<String> outputOpt) throws Exception {
-        File output = new File(outputOpt.orElse("."));
+    private void run(List<String> categories, List<String> languages, List<String> formats, String output) throws Exception {
+
+        File outputDir = new File(output);
+
         // AppLogger.log("Categories " + categories + " languages " + languages + " formats " + formats + " output " + output.getAbsolutePath());
-        if (!output.exists()) {
-            logger.info("Creating output directory \"{}\".", output.getAbsolutePath());
-            output.mkdirs();
+
+        if (!outputDir.exists()) {
+            logger.info("Creating output directory \"{}\".", outputDir.getAbsolutePath());
+            outputDir.mkdirs();
         }
+
         List<Format> typedFormats = formats.stream().map(f -> Format.valueOf(f.toUpperCase())).collect(Collectors.toList());
         List<Book> books = readTable(categories, languages);
         logger.info("Found {} books.", books.size());
-        logger.info("Downloading to  \"{}\".", output.getAbsolutePath());
-        BookDownloader downloader = new BookDownloader(output);
+        logger.info("Downloading to  \"{}\".", outputDir.getAbsolutePath());
+        BookDownloader downloader = new BookDownloader(outputDir);
         downloader.formats(typedFormats);
         books.forEach(book -> {
             logger.info("Downloading book \"{}\".", book.getTitle());
