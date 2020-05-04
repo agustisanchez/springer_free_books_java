@@ -51,7 +51,7 @@ Religion and Philosophy
 Social Sciences
 ```
 
-Type the following commands in a terminal to download all the books in the Chemistry and Computer Science categories (PDF format) and place them in the local directory "books".
+Type the following commands in a terminal window to download all the books in the Chemistry and Computer Science categories (PDF format) and place them in the local directory "books".
 
 ```
 java -jar springer.free.books-1.0.0.jar -c chemistry "computer science" -o books
