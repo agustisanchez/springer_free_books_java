@@ -15,11 +15,13 @@ import java.util.stream.Collectors;
 
 public class App {
 
-    static final int MIN_CAT_LENGTH = 5;
-
     private static Logger logger = LoggerFactory.getLogger(App.class);
 
-    String tableUrl = "https://resource-cms.springernature.com/springer-cms/rest/v1/content/17858272/data/v4";
+    private static String TABLE_URL = "https://resource-cms.springernature.com/springer-cms/rest/v1/content/17858272/data/v4";
+
+    private static String BASE_URL = "https://link.springer.com/";
+
+    private static String DOI_PREFIX = "http://doi.org/";
 
     public App() {
     }
@@ -61,8 +63,6 @@ public class App {
 
         File outputDir = new File(output);
 
-        // AppLogger.log("Categories " + categories + " languages " + languages + " formats " + formats + " output " + output.getAbsolutePath());
-
         if (!outputDir.exists()) {
             logger.info("Creating output directory \"{}\".", outputDir.getAbsolutePath());
             outputDir.mkdirs();
@@ -72,8 +72,7 @@ public class App {
         List<Book> books = readTable(categories, languages);
         logger.info("Found {} books.", books.size());
         logger.info("Downloading to  \"{}\".", outputDir.getAbsolutePath());
-        BookDownloader downloader = new BookDownloader(outputDir);
-        downloader.formats(typedFormats);
+        BookDownloader downloader = new BookDownloader(BASE_URL, DOI_PREFIX, typedFormats, outputDir);
         books.forEach(book -> {
             logger.info("Downloading book \"{}\".", book.getTitle());
             downloader.download(book);
@@ -82,7 +81,7 @@ public class App {
     }
 
     private List<Book> readTable(List<String> categories, List<String> languages) throws Exception {
-        URL url = new URL(tableUrl);
+        URL url = new URL(TABLE_URL);
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
         int responseCode = conn.getResponseCode();
         if (responseCode == 200) {

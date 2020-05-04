@@ -49,7 +49,7 @@ public class ExcelReader {
                 .skip(1)
                 .filter(row -> (categoryList.isEmpty() || categoryList.stream().anyMatch(i -> cell(categoryIndex, row).toUpperCase().contains(i))))
                 .filter(row -> (langList.isEmpty() || langList.contains(cell(langCodeIndex, row).toUpperCase())))
-                .map(row -> new Book(cell(titleIndex, row), cell(isbnIndex, row), cell(urlIndex, row)))
+                .map(row -> new Book(cell(titleIndex, row), cell(urlIndex, row)))
                 .collect(Collectors.toList());
     }
 

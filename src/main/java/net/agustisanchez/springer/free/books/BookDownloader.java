@@ -13,23 +13,21 @@ import java.util.List;
 
 public class BookDownloader {
 
-    private static String baseUrl = "https://link.springer.com/";
-
-    private static String prefix = "http://doi.org/";
-
     private Logger logger = LoggerFactory.getLogger(getClass());
+
+    private String baseUrl = "https://link.springer.com/";
+
+    private String doiPrefix = "http://doi.org/";
+
+    private List<Format> formats;
 
     private File outputDir;
 
-    private List<Format> formats = Collections.singletonList(Format.PDF);
-
-    public BookDownloader(File outputDir) {
-        this.outputDir = outputDir;
-    }
-
-    BookDownloader formats(List<Format> formats) {
+    BookDownloader(String baseUrl, String doiPrefix, List<Format> formats, File outputDir) {
+        this.baseUrl = baseUrl;
+        this.doiPrefix = doiPrefix;
         this.formats = formats;
-        return this;
+        this.outputDir = outputDir;
     }
 
     void download(Book book) {
@@ -38,7 +36,7 @@ public class BookDownloader {
                     .append(baseUrl)
                     .append(f.getPath())
                     .append("/")
-                    .append(book.getUrl().replace(prefix, "").replace("/", "%2F"))
+                    .append(book.getUrl().replace(doiPrefix, "").replace("/", "%2F"))
                     .append(f.getExt())
                     .toString();
             try {

@@ -7,7 +7,6 @@ import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,14 +24,4 @@ public class MatchesTest {
         System.out.println(list.stream().anyMatch(i -> "physics".contains(i)));
     }
 
-    @Test
-    public void testInterpolation(){
-        logger.info("aaa {} bbb{}cc{}", LocalDate.now(), 2, "ww");
-        logger.error("aaa {} bbb{}cc{}", LocalDate.now(), 2, "ww", new Exception());
-        String test = "aaa {} bbb{}cc{}";
-        String[] strings = test.split("\\{\\}");
-        System.out.println(Arrays.toString(strings));
-        StringBuilder builder = new StringBuilder();
-
-    }
 }
