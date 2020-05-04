@@ -54,6 +54,11 @@ public class App {
 
     private void run(List<String> categories, List<String> languages, List<String> formats, String output) throws Exception {
 
+        logger.info("Categories: \"{}\".", categories.stream().collect(Collectors.joining(",")));
+        logger.info("Languages: \"{}\".", languages.stream().collect(Collectors.joining(",")));
+        logger.info("Formats: \"{}\".", formats.stream().collect(Collectors.joining(",")));
+        logger.info("Output dir: \"{}\".", output);
+
         File outputDir = new File(output);
 
         // AppLogger.log("Categories " + categories + " languages " + languages + " formats " + formats + " output " + output.getAbsolutePath());

@@ -45,7 +45,6 @@ public class CommandLine {
                 }
             }
         });
-        System.out.println(valuesMap);
         return new CommandLine(optionsMap, valuesMap);
     }
 
