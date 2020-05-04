@@ -12,11 +12,11 @@ enum Format {
         this.ext = ext;
     }
 
-    public String getPath() {
+    String getPath() {
         return path;
     }
 
-    public String getExt() {
+    String getExt() {
         return ext;
     }
 }
