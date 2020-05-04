@@ -4,7 +4,7 @@ Please, go to https://github.com/alexgand/springer_free_books for the original P
 
 ## Requirements
 
-You need Java 8 or later.
+You need Java 8 or later to run the program.
 
 ## Executable
 
@@ -17,9 +17,41 @@ You'll find the executable file in the `target` directory.
 
 ## Examples
 
-Here are some examples for downloading the books:
 
-Download all the books in the Chemistry and Computer Science categories (PDF format) and place them in the local directory "books".
+Here are some examples on how to use this tool to download the books.
+
+The books are available mostly in PDF format but some are also available in ePUB format. 
+
+You can [download]("https://resource-cms.springernature.com/springer-cms/rest/v1/content/17858272/data/v4") a Excel file 
+with the complete list of books.
+
+Here is the list of available categories:
+
+```
+Behavioral Science
+Behavioral Science and Psychology
+Biomedical and Life Sciences
+Business and Economics
+Business and Management
+Chemistry and Materials Science
+Computer Science
+Earth and Environmental Science
+Economics and Finance
+Education
+Energy
+Engineering
+Humanities, Social Sciences and Law
+Intelligent Technologies and Robotics
+Law and Criminology
+Literature, Cultural and Media Studies
+Mathematics and Statistics
+Medicine
+Physics and Astronomy
+Religion and Philosophy
+Social Sciences
+```
+
+Type the following commands in a terminal to download all the books in the Chemistry and Computer Science categories (PDF format) and place them in the local directory "books".
 
 ```
 java -jar springer.free.books-1.0.0.jar -c chemistry "computer science" -o books
