@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,16 +72,27 @@ public class App {
         List<Format> typedFormats = formats.stream().map(f -> Format.valueOf(f.toUpperCase())).collect(Collectors.toList());
         List<Book> books = readTable(categories, languages);
         logger.info("Found {} books.", books.size());
-        logger.info("Downloading to  \"{}\".", outputDir.getAbsolutePath());
-        BookDownloader downloader = new BookDownloader(BASE_URL, DOI_PREFIX, typedFormats, outputDir);
-        books.forEach(book -> {
-            logger.info("Downloading book \"{}\".", book.getTitle());
-            downloader.download(book);
-        });
+        if (books.isEmpty()) {
+            logger.info("No books to download.", books.size());
+        } else {
+            logger.info("Downloading to  \"{}\".", outputDir.getAbsolutePath());
+            BookDownloader downloader = new BookDownloader(BASE_URL, DOI_PREFIX, typedFormats, outputDir);
+            books.forEach(book -> {
+                logger.info("Downloading book \"{}\".", book.getTitle());
+                downloader.download(book);
+            });
+        }
 
     }
 
     private List<Book> readTable(List<String> categories, List<String> languages) throws Exception {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("textbooks-v5.xlsx");
+        return new ExcelReader(inputStream).langs(languages).categories(categories).read();
+
+    }
+
+    @Deprecated
+    private List<Book> readTable0(List<String> categories, List<String> languages) throws Exception {
         URL url = new URL(TABLE_URL);
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
         int responseCode = conn.getResponseCode();
