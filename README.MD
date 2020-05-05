@@ -8,7 +8,7 @@ You need Java 8 or later to run the program.
 
 ## Executable
 
-The executable file is `springer.free.books-1.0.0.jar` and can be downloaded from [here](http://agustisanchez.net/public/springer.free.books-1.0.0.zip) (unzip the jar file).
+The executable file is `springer.free.books-1.1.0.jar` and can be downloaded from [here](http://agustisanchez.net/public/springer.free.books-1.1.0.zip) (unzip the jar file).
 
 ### Build
 
@@ -54,19 +54,19 @@ Social Sciences
 Type the following commands in a terminal window to download all the books in the Chemistry and Computer Science categories (PDF format) and place them in the local directory "books".
 
 ```
-java -jar springer.free.books-1.0.0.jar -c chemistry "computer science" -o books
+java -jar springer.free.books-1.1.0.jar -c chemistry "computer science" -o books
 ```
 
 Download all the books in the Chemistry and Computer Science categories, that are in ePUB format, and place them in the local directory "books".
 
 ```
-java -jar springer.free.books-1.0.0.jar -c chemistry "computer science" -f epub -o books
+java -jar springer.free.books-1.1.0.jar -c chemistry "computer science" -f epub -o books
 ```
 
 Download all the books in the Chemistry and Computer Science categories, that are in either PDF or ePUB format, that are written in English and place them in the local directory "books".
 
 ```
-java -jar springer.free.books-1.0.0.jar -c chemistry "computer science" -f pdf epub -l en -o books
+java -jar springer.free.books-1.1.0.jar -c chemistry "computer science" -f pdf epub -l en -o books
 ```
 
 
